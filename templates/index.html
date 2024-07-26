@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <title>QR Code Generator</title>
+{% endblock %}
+{% block body %}
+<section class="container-fluid text-center justify-content-center align-items-center d-flex">
+    <div class="row justify-content-center w-100">
+        <div id="formResultContainer" class="col-lg-8 col-12 d-flex flex-column align-items-center">
+            <div id="formContainer" class="col-12 d-flex flex-column justify-content-center align-items-center">
+                <form id="qrForm" action="/qrcode" method="POST" enctype="multipart/form-data" class="p-5">
+                    <label for="user_input" class="display-6 text-light nowrap-text">Text to QR Code</label><br>
+                    <input id="user_input" type="text" name="user_input" class="form-control-lg mt-4 bg-gradient rounded user-input" placeholder="Put your text here!" required><br>
+                    <div class="row text-light g-2 mt-2 justify-content-center align-items-center">
+                        <div class="form-group col-6 nowrap-text">
+                            <label for="quiet_zone">Quiet Zone</label>
+                            <select class="form-control text-center border-0" id="quiet_zone" name="quiet_zone">
+                                <option value="white">White</option>
+                                <option value="lightblue" class="blue">Blue</option>
+                                <option value="black">Black</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="dark">Dark</label>
+                            <select class="form-control text-center border-0" id="dark" name="dark">
+                                <option value="black" class="black">Black</option>
+                                <option value="purple" class="purple">Purple</option>
+                                <option value="white">White</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row text-light g-2 mt-1 justify-content-center">
+                        <div class="form-group col-6 nowrap-text">
+                            <label for="data_dark">Data Dark</label>
+                            <select class="form-control text-center border-0" id="data_dark" name="data_dark">
+                                <option value="purple" class="purple">purple</option>
+                                <option value="pink" class="pink">Pink</option>
+                                <option value="lightblue" class="blue">Blue</option>
+                                <option value="white">White</option>
+                                <option value="black" class="black">Black</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="light">Light</label>
+                            <select class="form-control text-center border-0" id="light" name="light">
+                                <option value="white">White</option>
+                                <option value="lightblue" class="blue">Blue</option>
+                                <option value="pink" class="pink">Pink</option>
+                                <option value="black" class="black">Black</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row align-items-center gap-4 mt-4 justify-content-center" id="scaleDIV">
+                        <label for="scale" id="scaleLabel" class="col-2 text-start text-light">Size</label>
+                        <input id="scale" type="range" name="scale" class="col-6 form-range rounded" min="1" max="60" step="1" value="10">
+                        <input type="number" min="1" max="60" id="scaleNumber" value="10" class="col-2 form-control text-center">
+                    </div>
+                    <div class="mt-3">
+                        <label for="logo" class="text-light">Upload Logo (Optional)</label>
+                        <input type="file" id="logo" name="logo" class="form-control mt-2">
+                    </div>
+                    <button type="submit" value="submit" class="col-8 btn btn-primary mt-4">Generate</button>
+                </form>
+            </div>
+            <div id="qrResult" class="col-9 order-1 order-lg-2 mt-4 mt-lg-0 d-none flex-column justify-content-center align-items-center">
+                {% if qr_file %}
+                    <img src="{{ url_for('static', filename=qr_file.split('static/')[-1]) }}" alt="QR Code" class="qrcodeImage mb-4">
+                    <form action="/dl-qrcode" method="POST">
+                        <input type="hidden" name="user_input" value="{{ user_text_input }}">
+                        <input type="hidden" name="scale" value="{{ scale }}">
+                        <button type="submit" class="btn btn-danger">Download</button>
+                        <a href="/"><button type="button" class="btn btn-secondary d-lg-none">New QR</button></a>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var scaleInput = document.getElementById('scale');
+    var scaleNumber = document.getElementById('scaleNumber');
+    var form = document.getElementById('qrForm');
+    var qrResult = document.getElementById('qrResult');
+    var formContainer = document.getElementById('formContainer');
+    var formResultContainer = document.getElementById('formResultContainer');
+
+    scaleNumber.value = scaleInput.value;
+
+    scaleInput.addEventListener('input', function() {
+        scaleNumber.value = scaleInput.value;
+    });
+
+    scaleNumber.addEventListener('input', function() {
+        scaleInput.value = scaleNumber.value;
+    });
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        var formData = new FormData(form);
+
+        fetch('/qrcode', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.qr_file) {
+                qrResult.innerHTML = '';
+
+                var img = document.createElement('img');
+                img.src = data.qr_file;
+                img.alt = 'QR Code';
+                img.classList.add('qrcodeImage', 'mb-4');
+
+                qrResult.appendChild(img);
+
+                var downloadForm = document.createElement('form');
+                downloadForm.action = '/dl-qrcode';
+                downloadForm.method = 'POST';
+                downloadForm.innerHTML = `
+                    <input type="hidden" name="user_input" value="${data.user_text_input}">
+                    <input type="hidden" name="scale" value="${data.scale}">
+                    <button type="submit" class="btn btn-success">Download</button>
+                    <a href="/" class="d-md-none"><button type="button" class="btn btn-secondary">New QR</button></a>
+                `;
+                qrResult.appendChild(downloadForm);
+
+                formResultContainer.classList.add('flex-lg-row');
+                formContainer.classList.replace('col-12', 'col-lg-6');
+                qrResult.classList.remove('d-none');
+
+                form.classList.add('d-none', 'd-md-block');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+});
+
+</script>
+{% endblock %}

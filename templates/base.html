@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/dist/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-icons/font/bootstrap-icons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <nav class="navbar bg-primary bg-gradient">
+      <div class="container-fluid align-items-start justify-content-start">
+        <a class="navbar-brand" href="/"><i class="bi bi-qr-code"></i> QR Code Generator</a>
+          <ul class="nav border-start">
+              <li class="nav-item">
+                  <a href="/" class="nav-link">Text to QR</a>
+              </li>
+          </ul>
+      </div>
+    </nav>
+    <div class="flex-grow-1">
+{% block body %} {% endblock %}
+    </div>
+    <footer class="bg-body-tertiary text-center mt-auto">
+
+        <div class="footer-bg1 p-4 text-light justify-content-center border-bottom">Transform your text into QR codes quickly and easily with our QR Code Generator. <br> Whether you're looking to share contact information, URLs, or any other text, our tool makes it simple and efficient.
+        </div>
+
+        <div class="text-center p-3 footer-bg1 text-light">
+            © 2024 Copyright:
+            <a href="/" class="text-light">QR Code Generator</a>
+        </div>
+    </footer>
+<script src="{{ url_for('static', filename='bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

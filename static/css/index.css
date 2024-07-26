@@ -1,0 +1,45 @@
+.user-input {
+    box-shadow: 0 0 10px rgba(179, 179, 179, 0.7);
+    width: 20rem;
+}
+#scale {
+    max-width: 8rem;
+}
+#scaleNumber {
+    border-radius: 5px;
+    width: 45px;
+    height: 30px;
+}
+#scaleLable {
+    font-size: 1.25rem;
+}
+.qrcodeImage {
+    width: 250px;
+    height: 250px;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+.nowrap-text {
+    white-space: nowrap;
+}
+.purple {
+    background-color: purple;
+    color: white;
+}
+.black {
+    background-color: black;
+    color: #aaaaaa;
+}
+.pink {
+    background-color: pink;
+}
+.blue {
+    background-color: lightblue;
+}
+

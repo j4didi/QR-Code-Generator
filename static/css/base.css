@@ -1,0 +1,15 @@
+body {
+    background-color: #00256a;
+    font-family: Bahnschrift;
+    height: 100%;
+    margin: 0;
+}
+.navbar-brand {
+    color: #dbe9fd;
+}
+.nav-link {
+    color: #f3f7ff;
+}
+.footer-bg1 {
+    background-color: #003083;
+}
